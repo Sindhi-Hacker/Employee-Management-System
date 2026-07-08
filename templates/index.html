@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaGoat HR</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<style>
+:root{
+  --grad-start:#7C3AED;
+  --grad-end:#4F46E5;
+  --bg:#F5F6FA;
+  --card-bg:#FFFFFF;
+  --text-dark:#1E1B2E;
+  --text-muted:#6B7280;
+  --border:#E5E7EB;
+  --radius:14px;
+  --shadow:0 4px 20px rgba(76,29,149,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text-dark);
+  overflow-x:hidden;
+}
+h1,h2,h3,.brand,.display{font-family:'Sora',sans-serif;}
+code, .mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:10px;}
+
+/* ============ LOGIN PAGE ============ */
+#login-page{
+  display:flex;
+  min-height:100vh;
+}
+.login-art{
+  flex:1.1;
+  background:linear-gradient(135deg,var(--grad-start),var(--grad-end));
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding:60px;
+  position:relative;
+  overflow:hidden;
+}
+.login-art::before{
+  content:'';
+  position:absolute;
+  width:500px;height:500px;
+  background:rgba(255,255,255,0.08);
+  border-radius:50%;
+  top:-150px;right:-150px;
+}
+.login-art::after{
+  content:'';
+  position:absolute;
+  width:350px;height:350px;
+  background:rgba(255,255,255,0.06);
+  border-radius:50%;
+  bottom:-100px;left:-80px;
+}
+.login-art .logo-mark{
+  width:56px;height:56px;
+  background:rgba(255,255,255,0.15);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+  backdrop-filter:blur(6px);
+}
+.login-art h1{font-size:42px;font-weight:800;line-height:1.15;margin-bottom:16px;z-index:1;}
+.login-art p{font-size:16px;opacity:0.9;max-width:420px;z-index:1;line-height:1.6;}
+.login-art .badges{display:flex;gap:10px;margin-top:36px;z-index:1;flex-wrap:wrap;}
+.login-art .badges span{
+  background:rgba(255,255,255,0.15);
+  padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;
+  backdrop-filter:blur(6px);
+}
+.login-form-wrap{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  padding:40px;
+}
+.login-form{
+  width:100%;max-width:380px;
+}
+.login-form h2{font-size:28px;font-weight:700;margin-bottom:8px;}
+.login-form .sub{color:var(--text-muted);margin-bottom:32px;font-size:14px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#374151;}
+.field input, .field select, .field textarea{
+  width:100%;
+  padding:11px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:14px;
+  outline:none;
+  transition:border-color .15s;
+  background:#fff;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color:var(--grad-end);
+}
+.btn-primary{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--grad-start),var(--grad-end));
+  color:#fff;
+  font-weight:600;
+  font-size:14px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 14px rgba(79,70,229,0.35);
+}
+.btn-primary:hover{opacity:0.94;}
+.hint{
+  margin-top:18px;
+  font-size:12.5px;
+  color:var(--text-muted);
+  background:#F5F3FF;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #EDE9FE;
+}
+.error-msg{
+  background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;
+  padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none;
+}
+
+/* ============ APP LAYOUT ============ */
+#app{display:none;min-height:100vh;}
+.sidebar{
+  width:250px;
+  background:linear-gradient(180deg,var(--grad-start),var(--grad-end));
+  color:#fff;
+  height:100vh;
+  position:fixed;
+  left:0;top:0;
+  display:flex;flex-direction:column;
+  padding:24px 16px;
+  z-index:100;
+}
+.sidebar .brand{
+  display:flex;align-items:center;gap:10px;
+  font-size:19px;font-weight:800;
+  padding:0 8px 28px 8px;
+}
+.sidebar .brand .mark{
+  width:34px;height:34px;background:rgba(255,255,255,0.18);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;
+  border-radius:10px;
+  color:rgba(255,255,255,0.82);
+  font-size:14px;font-weight:500;
+  margin-bottom:4px;
+  transition:background .15s;
+}
+.nav-item:hover{background:rgba(255,255,255,0.12);color:#fff;}
+.nav-item.active{background:rgba(255,255,255,0.22);color:#fff;font-weight:600;}
+.nav-item i{width:18px;height:18px;}
+.sidebar-footer{margin-top:auto;}
+.logout-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:10px;
+  color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;
+  background:rgba(255,255,255,0.08);
+  border:none;width:100%;
+}
+.logout-btn:hover{background:rgba(255,255,255,0.18);}
+
+.main{
+  margin-left:250px;
+  flex:1;
+  padding:26px 32px;
+  width:calc(100% - 250px);
+}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:26px;
+}
+.topbar h1{font-size:24px;font-weight:700;}
+.topbar .user-chip{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;padding:8px 14px;border-radius:999px;
+  box-shadow:var(--shadow);
+}
+.topbar .user-chip img{width:32px;height:32px;border-radius:50%;}
+.topbar .user-chip .info{font-size:13px;}
+.topbar .user-chip .info b{display:block;font-size:13.5px;}
+.topbar .user-chip .info span{color:var(--text-muted);font-size:12px;}
+
+.section{display:none;}
+.section.active{display:block;}
+
+/* ============ DASHBOARD ============ */
+.stat-cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:18px;
+  margin-bottom:24px;
+}
+.stat-card{
+  border-radius:var(--radius);
+  padding:20px;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  min-height:110px;
+}
+.stat-card .icon-wrap{
+  width:38px;height:38px;border-radius:10px;
+  background:rgba(255,255,255,0.22);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .value{font-size:26px;font-weight:800;font-family:'Sora',sans-serif;}
+.stat-card .label{font-size:12.5px;opacity:0.92;margin-top:2px;}
+.grad-blue{background:linear-gradient(135deg,#3B82F6,#2563EB);}
+.grad-green{background:linear-gradient(135deg,#10B981,#059669);}
+.grad-orange{background:linear-gradient(135deg,#F59E0B,#D97706);}
+.grad-pink{background:linear-gradient(135deg,#EC4899,#DB2777);}
+.grad-cyan{background:linear-gradient(135deg,#06B6D4,#0891B2);}
+
+.panel-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+.panel-row.two-col{grid-template-columns:1.4fr 1fr;}
+.panel{
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+.panel h3{font-size:15.5px;font-weight:700;margin-bottom:14px;}
+.panel canvas{max-height:230px;}
+
+.emp-list{max-height:250px;overflow-y:auto;}
+.emp-list-item{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 4px;
+  border-bottom:1px solid #F3F4F6;
+}
+.emp-list-item:last-child{border-bottom:none;}
+.emp-list-item img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.emp-list-item .name{font-size:13.5px;font-weight:600;flex:1;}
+.pill{
+  padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:600;color:#fff;white-space:nowrap;
+}
+
+/* ============ TOOLBAR / TABLE ============ */
+.toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;gap:12px;flex-wrap:wrap;
+}
+.toolbar .filters{display:flex;gap:10px;flex-wrap:wrap;flex:1;}
+.toolbar input[type="text"], .toolbar select{
+  padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:13.5px;background:#fff;min-width:150px;
+}
+.btn-add{
+  background:linear-gradient(135deg,var(--grad-start),var(--grad-end));
+  color:#fff;border:none;padding:10px 18px;border-radius:10px;
+  font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 14px rgba(79,70,229,0.3);white-space:nowrap;
+}
+.table-wrap{
+  background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  overflow-x:auto;
+}
+table{width:100%;border-collapse:collapse;min-width:700px;}
+thead th{
+  text-align:left;padding:14px 16px;font-size:12px;text-transform:uppercase;
+  letter-spacing:0.03em;color:var(--text-muted);border-bottom:1px solid var(--border);
+  font-weight:700;background:#FAFAFB;
+}
+tbody td{padding:13px 16px;font-size:13.5px;border-bottom:1px solid #F3F4F6;vertical-align:middle;}
+tbody tr:hover{background:#FAFAFB;}
+.cell-emp{display:flex;align-items:center;gap:10px;}
+.cell-emp img{width:34px;height:34px;border-radius:50%;object-fit:cover;}
+.cell-emp .sub{font-size:11.5px;color:var(--text-muted);}
+.badge{padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;}
+.badge-active{background:#D1FAE5;color:#065F46;}
+.badge-inactive{background:#F3F4F6;color:#4B5563;}
+.badge-terminated{background:#FEE2E2;color:#991B1B;}
+.badge-on_leave{background:#FEF3C7;color:#92400E;}
+.badge-pending{background:#FEF3C7;color:#92400E;}
+.badge-approved, .badge-paid, .badge-present{background:#D1FAE5;color:#065F46;}
+.badge-rejected, .badge-absent{background:#FEE2E2;color:#991B1B;}
+.badge-late, .badge-half_day{background:#FFEDD5;color:#9A3412;}
+.icon-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:#fff;display:inline-flex;align-items:center;justify-content:center;
+  margin-right:6px;color:#4B5563;
+}
+.icon-btn:hover{background:#F3F4F6;}
+.icon-btn.danger:hover{background:#FEF2F2;color:#DC2626;border-color:#FECACA;}
+.icon-btn.assign:hover{background:#F5F3FF;color:var(--grad-end);border-color:#DDD6FE;}
+.avatar-stack{display:flex;align-items:center;}
+.avatar-stack img{width:28px;height:28px;border-radius:50%;border:2px solid #fff;object-fit:cover;margin-left:-8px;}
+.avatar-stack img:first-child{margin-left:0;}
+.empty-state{padding:40px;text-align:center;color:var(--text-muted);font-size:14px;}
+
+/* ============ MODAL ============ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(17,10,40,0.45);
+  z-index:1000;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(2px);
+}
+.modal-overlay.active{display:flex;}
+.modal{
+  background:#fff;border-radius:16px;width:100%;max-width:520px;
+  max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 24px;border-bottom:1px solid var(--border);
+}
+.modal-header h3{font-size:17px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--text-muted);}
+.modal-body{padding:22px 24px;}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+.btn-secondary{
+  padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);
+  background:#fff;font-size:13.5px;font-weight:600;color:#374151;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.avatar-upload{
+  display:flex;align-items:center;gap:16px;margin-bottom:18px;
+}
+.avatar-upload img{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid var(--border);}
+.avatar-upload label{
+  padding:9px 15px;border:1.5px dashed #C4B5FD;border-radius:10px;
+  font-size:12.5px;font-weight:600;color:var(--grad-end);background:#F5F3FF;
+}
+.assign-list{max-height:280px;overflow-y:auto;}
+.assign-list-item{
+  display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:10px;
+  border:1.5px solid var(--border);margin-bottom:8px;cursor:pointer;
+}
+.assign-list-item:hover{border-color:var(--grad-end);background:#F5F3FF;}
+.assign-list-item img{width:34px;height:34px;border-radius:50%;object-fit:cover;}
+.assign-list-item.selected{border-color:var(--grad-end);background:#EDE9FE;}
+
+@media (max-width:1200px){
+  .stat-cards{grid-template-columns:repeat(2,1fr);}
+  .panel-row, .panel-row.two-col{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN PAGE ============ -->
+<div id="login-page">
+  <div class="login-art">
+    <div class="logo-mark"><i data-lucide="goat" style="width:28px;height:28px;"></i></div>
+    <h1>JavaGoat HR</h1>
+    <p>The all-in-one HR platform to manage employees, attendance, leaves and payroll — beautifully simple, built for modern teams.</p>
+    <div class="badges">
+      <span>Employees</span><span>Attendance</span><span>Payroll</span><span>Leaves</span>
+    </div>
+  </div>
+  <div class="login-form-wrap">
+    <form class="login-form" id="login-form">
+      <h2>Welcome back</h2>
+      <div class="sub">Sign in to your HR dashboard</div>
+      <div class="error-msg" id="login-error">Invalid email or password.</div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="admin@javagoat.hr" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-primary"><i data-lucide="log-in" style="width:16px;height:16px;"></i> Sign In</button>
+      <div class="hint">Demo credentials — <b>admin@javagoat.hr</b> / <b>password123</b></div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <div class="sidebar">
+    <div class="brand"><div class="mark"><i data-lucide="goat" style="width:18px;height:18px;"></i></div>JavaGoat HR</div>
+    <div class="nav-item active" data-route="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" data-route="employees"><i data-lucide="users"></i> Employees</div>
+    <div class="nav-item" data-route="departments"><i data-lucide="building-2"></i> Departments</div>
+    <div class="nav-item" data-route="positions"><i data-lucide="briefcase"></i> Positions</div>
+    <div class="nav-item" data-route="attendance"><i data-lucide="calendar-check"></i> Attendance</div>
+    <div class="nav-item" data-route="leaves"><i data-lucide="calendar-days"></i> Leaves</div>
+    <div class="nav-item" data-route="payroll"><i data-lucide="wallet"></i> Payroll</div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logout-btn"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="user-chip">
+        <img id="user-avatar" src="" alt="">
+        <div class="info"><b id="user-name">Admin User</b><span id="user-role">Administrator</span></div>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="section active" id="section-dashboard">
+      <div class="stat-cards" id="stat-cards"></div>
+      <div class="panel-row">
+        <div class="panel"><h3>Hiring Trend</h3><canvas id="chart-hiring"></canvas></div>
+        <div class="panel"><h3>Department Mix</h3><canvas id="chart-dept"></canvas></div>
+        <div class="panel"><h3>Employees by Position</h3><div class="emp-list" id="emp-position-list"></div></div>
+      </div>
+      <div class="panel-row two-col">
+        <div class="panel"><h3>Attendance Trend</h3><canvas id="chart-attendance"></canvas></div>
+        <div class="panel"><h3>Status Breakdown</h3><canvas id="chart-status"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ===== EMPLOYEES ===== -->
+    <div class="section" id="section-employees">
+      <div class="toolbar">
+        <div class="filters">
+          <input type="text" id="emp-search" placeholder="Search employees...">
+          <select id="emp-filter-dept"><option value="">All Departments</option></select>
+          <select id="emp-filter-status">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="on_leave">On Leave</option>
+            <option value="terminated">Terminated</option>
+          </select>
+        </div>
+        <button class="btn-add" id="btn-add-employee"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Employee</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employee</th><th>Department</th><th>Position</th><th>Salary</th><th>Status</th><th>Hire Date</th><th>Actions</th></tr></thead>
+          <tbody id="employees-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== DEPARTMENTS ===== -->
+    <div class="section" id="section-departments">
+      <div class="toolbar">
+        <div class="filters"><input type="text" id="dept-search" placeholder="Search departments..."></div>
+        <button class="btn-add" id="btn-add-department"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Department</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+          <tbody id="departments-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== POSITIONS ===== -->
+    <div class="section" id="section-positions">
+      <div class="toolbar">
+        <div class="filters"><input type="text" id="pos-search" placeholder="Search positions..."></div>
+        <button class="btn-add" id="btn-add-position"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Position</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Department</th><th>Salary Range</th><th>Assigned Employees</th><th>Actions</th></tr></thead>
+          <tbody id="positions-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ATTENDANCE ===== -->
+    <div class="section" id="section-attendance">
+      <div class="toolbar">
+        <div class="filters">
+          <input type="text" id="att-search" placeholder="Search employee...">
+          <select id="att-filter-status">
+            <option value="">All Status</option>
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+            <option value="late">Late</option>
+            <option value="half_day">Half Day</option>
+          </select>
+        </div>
+        <button class="btn-add" id="btn-add-attendance"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Record</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employee</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="attendance-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== LEAVES ===== -->
+    <div class="section" id="section-leaves">
+      <div class="toolbar">
+        <div class="filters">
+          <input type="text" id="leave-search" placeholder="Search employee...">
+          <select id="leave-filter-status">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <button class="btn-add" id="btn-add-leave"><i data-lucide="plus" style="width:16px;height:16px;"></i> Request Leave</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="leaves-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PAYROLL ===== -->
+    <div class="section" id="section-payroll">
+      <div class="toolbar">
+        <div class="filters">
+          <input type="text" id="pay-search" placeholder="Search employee...">
+          <select id="pay-filter-status">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        <button class="btn-add" id="btn-add-payroll"><i data-lucide="plus" style="width:16px;height:16px;"></i> Generate Payroll</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employee</th><th>Period</th><th>Basic</th><th>Bonus</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="payroll-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-overlay" id="modal-employee">
+  <div class="modal">
+    <div class="modal-header"><h3 id="employee-modal-title">Add Employee</h3><button class="modal-close" onclick="closeModal('modal-employee')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="emp-id">
+      <div class="avatar-upload">
+        <img id="emp-avatar-preview" src="https://api.dicebear.com/7.x/initials/svg?backgroundColor=6D28D9" alt="">
+        <label>Upload Photo<input type="file" id="emp-photo-input" accept="image/*" style="display:none;"></label>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>First Name</label><input type="text" id="emp-first-name"></div>
+        <div class="field"><label>Last Name</label><input type="text" id="emp-last-name"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Email</label><input type="email" id="emp-email"></div>
+        <div class="field"><label>Phone</label><input type="text" id="emp-phone"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Department</label><select id="emp-department"></select></div>
+        <div class="field"><label>Position</label><select id="emp-position"></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Salary</label><input type="number" id="emp-salary"></div>
+        <div class="field"><label>Status</label>
+          <select id="emp-status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="on_leave">On Leave</option>
+            <option value="terminated">Terminated</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Hire Date</label><input type="date" id="emp-hire-date"></div>
+        <div class="field"><label>Address</label><input type="text" id="emp-address"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-employee')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="saveEmployee()">Save Employee</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-department">
+  <div class="modal">
+    <div class="modal-header"><h3 id="department-modal-title">Add Department</h3><button class="modal-close" onclick="closeModal('modal-department')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="dept-id">
+      <div class="field"><label>Name</label><input type="text" id="dept-name"></div>
+      <div class="field"><label>Description</label><textarea id="dept-description" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-department')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="saveDepartment()">Save Department</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-position">
+  <div class="modal">
+    <div class="modal-header"><h3 id="position-modal-title">Add Position</h3><button class="modal-close" onclick="closeModal('modal-position')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="pos-id">
+      <div class="field"><label>Title</label><input type="text" id="pos-title"></div>
+      <div class="field"><label>Department</label><select id="pos-department"></select></div>
+      <div class="form-row">
+        <div class="field"><label>Min Salary</label><input type="number" id="pos-min-salary"></div>
+        <div class="field"><label>Max Salary</label><input type="number" id="pos-max-salary"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-position')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="savePosition()">Save Position</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-assign">
+  <div class="modal">
+    <div class="modal-header"><h3>Assign Employee</h3><button class="modal-close" onclick="closeModal('modal-assign')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="assign-position-id">
+      <div class="field"><input type="text" id="assign-search" placeholder="Search employees..." oninput="renderAssignList()"></div>
+      <div class="assign-list" id="assign-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-assign')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="confirmAssign()">Assign</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-attendance">
+  <div class="modal">
+    <div class="modal-header"><h3 id="attendance-modal-title">Add Attendance</h3><button class="modal-close" onclick="closeModal('modal-attendance')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="att-id">
+      <div class="field"><label>Employee</label><select id="att-employee"></select></div>
+      <div class="field"><label>Date</label><input type="date" id="att-date"></div>
+      <div class="form-row">
+        <div class="field"><label>Check In</label><input type="time" id="att-checkin"></div>
+        <div class="field"><label>Check Out</label><input type="time" id="att-checkout"></div>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="att-status">
+          <option value="present">Present</option>
+          <option value="absent">Absent</option>
+          <option value="late">Late</option>
+          <option value="half_day">Half Day</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes</label><textarea id="att-notes" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-attendance')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="saveAttendance()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-leave">
+  <div class="modal">
+    <div class="modal-header"><h3 id="leave-modal-title">Request Leave</h3><button class="modal-close" onclick="closeModal('modal-leave')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="leave-id">
+      <div class="field"><label>Employee</label><select id="leave-employee"></select></div>
+      <div class="field"><label>Leave Type</label>
+        <select id="leave-type">
+          <option value="annual">Annual</option>
+          <option value="sick">Sick</option>
+          <option value="unpaid">Unpaid</option>
+          <option value="maternity">Maternity</option>
+          <option value="paternity">Paternity</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Start Date</label><input type="date" id="leave-start"></div>
+        <div class="field"><label>End Date</label><input type="date" id="leave-end"></div>
+      </div>
+      <div class="field"><label>Reason</label><textarea id="leave-reason" rows="2"></textarea></div>
+      <div class="field"><label>Status</label>
+        <select id="leave-status">
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-leave')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="saveLeave()">Save Leave</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-payroll">
+  <div class="modal">
+    <div class="modal-header"><h3 id="payroll-modal-title">Generate Payroll</h3><button class="modal-close" onclick="closeModal('modal-payroll')"><i data-lucide="x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="pay-id">
+      <div class="field"><label>Employee</label><select id="pay-employee" onchange="autofillSalary()"></select></div>
+      <div class="field"><label>Pay Period (YYYY-MM)</label><input type="text" id="pay-period" placeholder="2026-07"></div>
+      <div class="form-row">
+        <div class="field"><label>Basic Salary</label><input type="number" id="pay-basic" oninput="recalcNetPay()"></div>
+        <div class="field"><label>Bonus</label><input type="number" id="pay-bonus" oninput="recalcNetPay()"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Deductions</label><input type="number" id="pay-deductions" oninput="recalcNetPay()"></div>
+        <div class="field"><label>Net Pay</label><input type="number" id="pay-net" readonly style="background:#F9FAFB;"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Pay Date</label><input type="date" id="pay-date"></div>
+        <div class="field"><label>Status</label>
+          <select id="pay-status"><option value="pending">Pending</option><option value="paid">Paid</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-payroll')">Cancel</button>
+      <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="savePayroll()">Save Payroll</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+const API = '';
+const DEFAULT_AVATAR = 'https://api.dicebear.com/7.x/initials/svg?backgroundColor=6D28D9';
+const CHART_COLORS = ['#7C3AED','#F59E0B','#10B981','#EC4899','#06B6D4','#EF4444','#3B82F6','#8B5CF6','#F97316','#14B8A6'];
+const STATUS_COLORS = {active:'#10B981',inactive:'#9CA3AF',on_leave:'#F59E0B',terminated:'#EF4444'};
+
+let state = {
+  departments: [],
+  positions: [],
+  employees: [],
+  charts: {}
+};
+
+/* =========================================================
+   AUTH
+========================================================= */
+function getToken(){ return localStorage.getItem('jg_token'); }
+
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errBox = document.getElementById('login-error');
+  errBox.style.display = 'none';
+  try{
+    const res = await fetch(API + '/api/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, password})
+    });
+    const json = await res.json();
+    if(!res.ok || !json.success){
+      errBox.textContent = json.error || 'Invalid email or password.';
+      errBox.style.display = 'block';
+      return;
+    }
+    localStorage.setItem('jg_token', json.data.token);
+    localStorage.setItem('jg_user', JSON.stringify(json.data.user));
+    enterApp(json.data.user);
+  }catch(err){
+    errBox.textContent = 'Unable to connect to server.';
+    errBox.style.display = 'block';
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', ()=>{
+  localStorage.removeItem('jg_token');
+  localStorage.removeItem('jg_user');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+});
+
+function enterApp(user){
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('user-name').textContent = user.name;
+  document.getElementById('user-role').textContent = user.role;
+  document.getElementById('user-avatar').src = user.avatar || DEFAULT_AVATAR;
+  lucide.createIcons();
+  initApp();
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  lucide.createIcons();
+  const token = getToken();
+  const user = JSON.parse(localStorage.getItem('jg_user') || 'null');
+  if(token && user){ enterApp(user); }
+});
+
+/* =========================================================
+   API HELPERS
+========================================================= */
+async function apiGet(path){
+  const res = await fetch(API + path, { headers:{ 'Authorization':'Bearer ' + getToken() } });
+  const json = await res.json();
+  if(!json.success) throw new Error(json.error || 'Request failed');
+  return json.data;
+}
+async function apiSend(path, method, body){
+  const res = await fetch(API + path, {
+    method,
+    headers:{'Content-Type':'application/json','Authorization':'Bearer ' + getToken()},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const json = await res.json();
+  if(!json.success) throw new Error(json.error || 'Request failed');
+  return json.data;
+}
+const apiPost = (p,b)=>apiSend(p,'POST',b);
+const apiPut = (p,b)=>apiSend(p,'PUT',b);
+const apiDelete = (p)=>apiSend(p,'DELETE');
+
+/* =========================================================
+   ROUTING
+========================================================= */
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    item.classList.add('active');
+    const route = item.dataset.route;
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('section-' + route).classList.add('active');
+    document.getElementById('page-title').textContent = item.textContent.trim();
+    loadSection(route);
+  });
+});
+
+function loadSection(route){
+  if(route === 'dashboard') loadDashboard();
+  if(route === 'employees') loadEmployees();
+  if(route === 'departments') loadDepartments();
+  if(route === 'positions') loadPositions();
+  if(route === 'attendance') loadAttendance();
+  if(route === 'leaves') loadLeaves();
+  if(route === 'payroll') loadPayroll();
+}
+
+async function initApp(){
+  try{
+    state.departments = await apiGet('/api/departments');
+    state.positions = await apiGet('/api/positions');
+    state.employees = await apiGet('/api/employees');
+    populateDeptDropdowns();
+    populatePositionDropdowns();
+    populateEmployeeDropdowns();
+  }catch(e){ console.error(e); }
+  loadDashboard();
+}
+
+/* =========================================================
+   MODAL HELPERS
+========================================================= */
+function openModal(id){ document.getElementById(id).classList.add('active'); lucide.createIcons(); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+/* =========================================================
+   DROPDOWN POPULATION
+========================================================= */
+function populateDeptDropdowns(){
+  const opts = state.departments.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  ['emp-department','pos-department'].forEach(id=>{
+    document.getElementById(id).innerHTML = '<option value="">Select Department</option>' + opts;
+  });
+  document.getElementById('emp-filter-dept').innerHTML = '<option value="">All Departments</option>' + opts;
+}
+function populatePositionDropdowns(){
+  const opts = state.positions.map(p=>`<option value="${p.id}">${p.title}</option>`).join('');
+  document.getElementById('emp-position').innerHTML = '<option value="">Select Position</option>' + opts;
+}
+function populateEmployeeDropdowns(){
+  const opts = state.employees.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+  ['att-employee','leave-employee','pay-employee'].forEach(id=>{
+    document.getElementById(id).innerHTML = '<option value="">Select Employee</option>' + opts;
+  });
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+async function loadDashboard(){
+  let stats;
+  try{ stats = await apiGet('/api/dashboard/stats'); }catch(e){ console.error(e); return; }
+
+  const cardsHtml = stats.cards.map(c=>`
+    <div class="stat-card grad-${c.gradient}">
+      <div class="icon-wrap"><i data-lucide="${c.icon}" style="width:20px;height:20px;"></i></div>
+      <div class="value">${c.value}</div>
+      <div class="label">${c.label}</div>
+    </div>`).join('');
+  document.getElementById('stat-cards').innerHTML = cardsHtml;
+
+  const listHtml = stats.employees_by_position.map(e=>{
+    const color = CHART_COLORS[Math.abs(hashCode(e.position_title)) % CHART_COLORS.length];
+    return `
+    <div class="emp-list-item">
+      <img src="${e.profile_pic}" alt="">
+      <div class="name">${e.name}</div>
+      <span class="pill" style="background:${color};">${e.position_title}</span>
+    </div>`;
+  }).join('') || '<div class="empty-state">No employees found</div>';
+  document.getElementById('emp-position-list').innerHTML = listHtml;
+
+  renderChart('chart-hiring','bar',stats.hiring_trend.labels,[{
+    label:'New Hires', data:stats.hiring_trend.data, backgroundColor:'#7C3AED', borderRadius:6
+  }]);
+
+  renderDoughnut('chart-dept', stats.department_mix.labels, stats.department_mix.data);
+  renderDoughnut('chart-status', stats.status_breakdown.labels, stats.status_breakdown.data);
+
+  renderChart('chart-attendance','line',stats.attendance_trend.labels,[{
+    label:'Present', data:stats.attendance_trend.data, borderColor:'#4F46E5',
+    backgroundColor:'rgba(124,58,237,0.12)', fill:true, tension:0.35, pointRadius:3
+  }]);
+
+  lucide.createIcons();
+}
+
+function hashCode(str){
+  let hash = 0;
+  for(let i=0;i<str.length;i++){ hash = (hash << 5) - hash + str.charCodeAt(i); hash |= 0; }
+  return hash;
+}
+
+function renderChart(canvasId, type, labels, datasets){
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if(state.charts[canvasId]) state.charts[canvasId].destroy();
+  state.charts[canvasId] = new Chart(ctx, {
+    type, data:{labels, datasets},
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{ y:{beginAtZero:true, grid:{color:'#F3F4F6'}}, x:{grid:{display:false}} }
+    }
+  });
+}
+
+function renderDoughnut(canvasId, labels, data){
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if(state.charts[canvasId]) state.charts[canvasId].destroy();
+  state.charts[canvasId] = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor: labels.map((_,i)=>CHART_COLORS[i % CHART_COLORS.length]), borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{boxWidth:10, font:{size:11}} } } }
+  });
+}
+
+/* =========================================================
+   IMAGE RESIZE (Canvas) — used for employee profile pics
+========================================================= */
+function resizeImageToBase64(file, maxW, maxH){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let { width, height } = img;
+        const ratio = Math.min(maxW / width, maxH / height, 1);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('emp-photo-input').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const base64 = await resizeImageToBase64(file, 200, 200);
+  document.getElementById('emp-avatar-preview').src = base64;
+});
+
+/* =========================================================
+   EMPLOYEES
+========================================================= */
+async function loadEmployees(){
+  const search = document.getElementById('emp-search').value;
+  const dept = document.getElementById('emp-filter-dept').value;
+  const status = document.getElementById('emp-filter-status').value;
+  const params = new URLSearchParams();
+  if(search) params.append('search', search);
+  if(dept) params.append('department_id', dept);
+  if(status) params.append('status', status);
+
+  let employees;
+  try{ employees = await apiGet('/api/employees?' + params.toString()); }
+  catch(e){ console.error(e); return; }
+  state.employees = employees;
+  populateEmployeeDropdowns();
+
+  const rows = employees.map(emp=>`
+    <tr>
+      <td>
+        <div class="cell-emp">
+          <img src="${emp.profile_pic || DEFAULT_AVATAR}" alt="">
+          <div><div>${emp.first_name} ${emp.last_name}</div><div class="sub">${emp.email}</div></div>
+        </div>
+      </td>
+      <td>${emp.department_name || 'Unassigned'}</td>
+      <td>${emp.position_title || 'Unassigned'}</td>
+      <td>$${Number(emp.salary || 0).toLocaleString()}</td>
+      <td><span class="badge badge-${emp.status}">${labelize(emp.status)}</span></td>
+      <td>${emp.hire_date || '-'}</td>
+      <td>
+        <button class="icon-btn" onclick="editEmployee('${emp.id}')"><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deleteEmployee('${emp.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('employees-tbody').innerHTML = rows || `<tr><td colspan="7" class="empty-state">No employees found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('emp-search').addEventListener('input', debounce(loadEmployees, 300));
+document.getElementById('emp-filter-dept').addEventListener('change', loadEmployees);
+document.getElementById('emp-filter-status').addEventListener('change', loadEmployees);
+
+function labelize(s){ return (s||'').replace('_',' ').replace(/\b\w/g, c=>c.toUpperCase()); }
+
+document.getElementById('btn-add-employee').addEventListener('click', ()=>{
+  document.getElementById('employee-modal-title').textContent = 'Add Employee';
+  document.getElementById('emp-id').value = '';
+  document.getElementById('emp-first-name').value = '';
+  document.getElementById('emp-last-name').value = '';
+  document.getElementById('emp-email').value = '';
+  document.getElementById('emp-phone').value = '';
+  document.getElementById('emp-department').value = '';
+  document.getElementById('emp-position').value = '';
+  document.getElementById('emp-salary').value = '';
+  document.getElementById('emp-status').value = 'active';
+  document.getElementById('emp-hire-date').value = '';
+  document.getElementById('emp-address').value = '';
+  document.getElementById('emp-avatar-preview').src = DEFAULT_AVATAR;
+  openModal('modal-employee');
+});
+
+async function editEmployee(id){
+  const emp = state.employees.find(e=>e.id === id) || await apiGet('/api/employees/' + id);
+  document.getElementById('employee-modal-title').textContent = 'Edit Employee';
+  document.getElementById('emp-id').value = emp.id;
+  document.getElementById('emp-first-name').value = emp.first_name || '';
+  document.getElementById('emp-last-name').value = emp.last_name || '';
+  document.getElementById('emp-email').value = emp.email || '';
+  document.getElementById('emp-phone').value = emp.phone || '';
+  document.getElementById('emp-department').value = emp.department_id || '';
+  document.getElementById('emp-position').value = emp.position_id || '';
+  document.getElementById('emp-salary').value = emp.salary || '';
+  document.getElementById('emp-status').value = emp.status || 'active';
+  document.getElementById('emp-hire-date').value = emp.hire_date || '';
+  document.getElementById('emp-address').value = emp.address || '';
+  document.getElementById('emp-avatar-preview').src = emp.profile_pic || DEFAULT_AVATAR;
+  openModal('modal-employee');
+}
+
+async function saveEmployee(){
+  const id = document.getElementById('emp-id').value;
+  const payload = {
+    first_name: document.getElementById('emp-first-name').value,
+    last_name: document.getElementById('emp-last-name').value,
+    email: document.getElementById('emp-email').value,
+    phone: document.getElementById('emp-phone').value,
+    department_id: document.getElementById('emp-department').value || null,
+    position_id: document.getElementById('emp-position').value || null,
+    salary: parseFloat(document.getElementById('emp-salary').value || 0),
+    status: document.getElementById('emp-status').value,
+    hire_date: document.getElementById('emp-hire-date').value || null,
+    address: document.getElementById('emp-address').value,
+    profile_pic: document.getElementById('emp-avatar-preview').src
+  };
+  try{
+    if(id) await apiPut('/api/employees/' + id, payload);
+    else await apiPost('/api/employees', payload);
+    closeModal('modal-employee');
+    await loadEmployees();
+  }catch(e){ alert(e.message); }
+}
+
+async function deleteEmployee(id){
+  if(!confirm('Delete this employee?')) return;
+  try{ await apiDelete('/api/employees/' + id); await loadEmployees(); }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   DEPARTMENTS
+========================================================= */
+async function loadDepartments(){
+  const search = document.getElementById('dept-search').value.toLowerCase();
+  let depts;
+  try{ depts = await apiGet('/api/departments'); }catch(e){ console.error(e); return; }
+  state.departments = depts;
+  populateDeptDropdowns();
+  const filtered = search ? depts.filter(d=>d.name.toLowerCase().includes(search)) : depts;
+  const rows = filtered.map(d=>`
+    <tr>
+      <td><b>${d.name}</b></td>
+      <td>${d.description || '-'}</td>
+      <td>
+        <button class="icon-btn" onclick="editDepartment('${d.id}')"><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deleteDepartment('${d.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('departments-tbody').innerHTML = rows || `<tr><td colspan="3" class="empty-state">No departments found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('dept-search').addEventListener('input', debounce(loadDepartments, 300));
+
+document.getElementById('btn-add-department').addEventListener('click', ()=>{
+  document.getElementById('department-modal-title').textContent = 'Add Department';
+  document.getElementById('dept-id').value = '';
+  document.getElementById('dept-name').value = '';
+  document.getElementById('dept-description').value = '';
+  openModal('modal-department');
+});
+
+function editDepartment(id){
+  const d = state.departments.find(x=>x.id === id);
+  document.getElementById('department-modal-title').textContent = 'Edit Department';
+  document.getElementById('dept-id').value = d.id;
+  document.getElementById('dept-name').value = d.name;
+  document.getElementById('dept-description').value = d.description || '';
+  openModal('modal-department');
+}
+
+async function saveDepartment(){
+  const id = document.getElementById('dept-id').value;
+  const payload = {
+    name: document.getElementById('dept-name').value,
+    description: document.getElementById('dept-description').value
+  };
+  try{
+    if(id) await apiPut('/api/departments/' + id, payload);
+    else await apiPost('/api/departments', payload);
+    closeModal('modal-department');
+    await loadDepartments();
+  }catch(e){ alert(e.message); }
+}
+
+async function deleteDepartment(id){
+  if(!confirm('Delete this department?')) return;
+  try{ await apiDelete('/api/departments/' + id); await loadDepartments(); }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   POSITIONS
+========================================================= */
+async function loadPositions(){
+  const search = document.getElementById('pos-search').value.toLowerCase();
+  let positions;
+  try{ positions = await apiGet('/api/positions'); }catch(e){ console.error(e); return; }
+  state.positions = positions;
+  populatePositionDropdowns();
+  const filtered = search ? positions.filter(p=>p.title.toLowerCase().includes(search)) : positions;
+
+  const rows = filtered.map(p=>{
+    const avatars = (p.employees || []).slice(0,5).map(e=>`<img src="${e.profile_pic}" title="${e.name}">`).join('');
+    return `
+    <tr>
+      <td><b>${p.title}</b></td>
+      <td>${p.department_name || 'Unassigned'}</td>
+      <td>$${Number(p.min_salary||0).toLocaleString()} - $${Number(p.max_salary||0).toLocaleString()}</td>
+      <td>
+        <div class="avatar-stack">${avatars || '<span style="color:#9CA3AF;font-size:12.5px;">No employees</span>'}</div>
+      </td>
+      <td>
+        <button class="icon-btn assign" onclick="openAssignModal('${p.id}')"><i data-lucide="user-plus" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn" onclick="editPosition('${p.id}')"><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deletePosition('${p.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('positions-tbody').innerHTML = rows || `<tr><td colspan="5" class="empty-state">No positions found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('pos-search').addEventListener('input', debounce(loadPositions, 300));
+
+document.getElementById('btn-add-position').addEventListener('click', ()=>{
+  document.getElementById('position-modal-title').textContent = 'Add Position';
+  document.getElementById('pos-id').value = '';
+  document.getElementById('pos-title').value = '';
+  document.getElementById('pos-department').value = '';
+  document.getElementById('pos-min-salary').value = '';
+  document.getElementById('pos-max-salary').value = '';
+  openModal('modal-position');
+});
+
+function editPosition(id){
+  const p = state.positions.find(x=>x.id === id);
+  document.getElementById('position-modal-title').textContent = 'Edit Position';
+  document.getElementById('pos-id').value = p.id;
+  document.getElementById('pos-title').value = p.title;
+  document.getElementById('pos-department').value = p.department_id || '';
+  document.getElementById('pos-min-salary').value = p.min_salary || '';
+  document.getElementById('pos-max-salary').value = p.max_salary || '';
+  openModal('modal-position');
+}
+
+async function savePosition(){
+  const id = document.getElementById('pos-id').value;
+  const payload = {
+    title: document.getElementById('pos-title').value,
+    department_id: document.getElementById('pos-department').value || null,
+    min_salary: parseFloat(document.getElementById('pos-min-salary').value || 0),
+    max_salary: parseFloat(document.getElementById('pos-max-salary').value || 0)
+  };
+  try{
+    if(id) await apiPut('/api/positions/' + id, payload);
+    else await apiPost('/api/positions', payload);
+    closeModal('modal-position');
+    await loadPositions();
+  }catch(e){ alert(e.message); }
+}
+
+async function deletePosition(id){
+  if(!confirm('Delete this position?')) return;
+  try{ await apiDelete('/api/positions/' + id); await loadPositions(); }catch(e){ alert(e.message); }
+}
+
+let assignSelectedEmployeeId = null;
+function openAssignModal(positionId){
+  document.getElementById('assign-position-id').value = positionId;
+  document.getElementById('assign-search').value = '';
+  assignSelectedEmployeeId = null;
+  renderAssignList();
+  openModal('modal-assign');
+}
+function renderAssignList(){
+  const search = document.getElementById('assign-search').value.toLowerCase();
+  const list = state.employees.filter(e=>`${e.first_name} ${e.last_name}`.toLowerCase().includes(search));
+  document.getElementById('assign-list').innerHTML = list.map(e=>`
+    <div class="assign-list-item ${assignSelectedEmployeeId===e.id?'selected':''}" onclick="selectAssignEmployee('${e.id}')">
+      <img src="${e.profile_pic || DEFAULT_AVATAR}" alt="">
+      <div><div style="font-weight:600;font-size:13.5px;">${e.first_name} ${e.last_name}</div><div style="font-size:11.5px;color:var(--text-muted);">${e.email}</div></div>
+    </div>`).join('') || '<div class="empty-state">No employees found</div>';
+}
+function selectAssignEmployeeId_helper(){} // no-op placeholder to keep naming clear
+function selectAssignEmployee(id){
+  assignSelectedEmployeeId = id;
+  renderAssignList();
+}
+async function confirmAssign(){
+  const positionId = document.getElementById('assign-position-id').value;
+  if(!assignSelectedEmployeeId){ alert('Please select an employee'); return; }
+  try{
+    await apiPost(`/api/positions/${positionId}/assign`, { employee_id: assignSelectedEmployeeId });
+    closeModal('modal-assign');
+    state.employees = await apiGet('/api/employees');
+    await loadPositions();
+  }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+async function loadAttendance(){
+  const search = document.getElementById('att-search').value;
+  const status = document.getElementById('att-filter-status').value;
+  const params = new URLSearchParams();
+  if(search) params.append('search', search);
+  if(status) params.append('status', status);
+  let records;
+  try{ records = await apiGet('/api/attendance?' + params.toString()); }catch(e){ console.error(e); return; }
+
+  const rows = records.map(r=>`
+    <tr>
+      <td><div class="cell-emp"><img src="${r.employee_pic}" alt=""><div>${r.employee_name}</div></div></td>
+      <td>${r.date}</td>
+      <td>${r.check_in || '-'}</td>
+      <td>${r.check_out || '-'}</td>
+      <td><span class="badge badge-${r.status}">${labelize(r.status)}</span></td>
+      <td>
+        <button class="icon-btn" onclick='editAttendance(${JSON.stringify(r)})'><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deleteAttendance('${r.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('attendance-tbody').innerHTML = rows || `<tr><td colspan="6" class="empty-state">No attendance records found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('att-search').addEventListener('input', debounce(loadAttendance, 300));
+document.getElementById('att-filter-status').addEventListener('change', loadAttendance);
+
+document.getElementById('btn-add-attendance').addEventListener('click', ()=>{
+  document.getElementById('attendance-modal-title').textContent = 'Add Attendance';
+  document.getElementById('att-id').value = '';
+  document.getElementById('att-employee').value = '';
+  document.getElementById('att-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('att-checkin').value = '';
+  document.getElementById('att-checkout').value = '';
+  document.getElementById('att-status').value = 'present';
+  document.getElementById('att-notes').value = '';
+  openModal('modal-attendance');
+});
+
+function editAttendance(r){
+  document.getElementById('attendance-modal-title').textContent = 'Edit Attendance';
+  document.getElementById('att-id').value = r.id;
+  document.getElementById('att-employee').value = r.employee_id;
+  document.getElementById('att-date').value = r.date;
+  document.getElementById('att-checkin').value = r.check_in || '';
+  document.getElementById('att-checkout').value = r.check_out || '';
+  document.getElementById('att-status').value = r.status;
+  document.getElementById('att-notes').value = r.notes || '';
+  openModal('modal-attendance');
+}
+
+async function saveAttendance(){
+  const id = document.getElementById('att-id').value;
+  const payload = {
+    employee_id: document.getElementById('att-employee').value,
+    date: document.getElementById('att-date').value,
+    check_in: document.getElementById('att-checkin').value || null,
+    check_out: document.getElementById('att-checkout').value || null,
+    status: document.getElementById('att-status').value,
+    notes: document.getElementById('att-notes').value
+  };
+  try{
+    if(id) await apiPut('/api/attendance/' + id, payload);
+    else await apiPost('/api/attendance', payload);
+    closeModal('modal-attendance');
+    await loadAttendance();
+  }catch(e){ alert(e.message); }
+}
+
+async function deleteAttendance(id){
+  if(!confirm('Delete this record?')) return;
+  try{ await apiDelete('/api/attendance/' + id); await loadAttendance(); }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   LEAVES
+========================================================= */
+async function loadLeaves(){
+  const search = document.getElementById('leave-search').value;
+  const status = document.getElementById('leave-filter-status').value;
+  const params = new URLSearchParams();
+  if(search) params.append('search', search);
+  if(status) params.append('status', status);
+  let records;
+  try{ records = await apiGet('/api/leaves?' + params.toString()); }catch(e){ console.error(e); return; }
+
+  const rows = records.map(r=>`
+    <tr>
+      <td><div class="cell-emp"><img src="${r.employee_pic}" alt=""><div>${r.employee_name}</div></div></td>
+      <td>${labelize(r.leave_type)}</td>
+      <td>${r.start_date}</td>
+      <td>${r.end_date}</td>
+      <td><span class="badge badge-${r.status}">${labelize(r.status)}</span></td>
+      <td>
+        <button class="icon-btn" onclick='editLeave(${JSON.stringify(r)})'><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deleteLeave('${r.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('leaves-tbody').innerHTML = rows || `<tr><td colspan="6" class="empty-state">No leave records found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('leave-search').addEventListener('input', debounce(loadLeaves, 300));
+document.getElementById('leave-filter-status').addEventListener('change', loadLeaves);
+
+document.getElementById('btn-add-leave').addEventListener('click', ()=>{
+  document.getElementById('leave-modal-title').textContent = 'Request Leave';
+  document.getElementById('leave-id').value = '';
+  document.getElementById('leave-employee').value = '';
+  document.getElementById('leave-type').value = 'annual';
+  document.getElementById('leave-start').value = '';
+  document.getElementById('leave-end').value = '';
+  document.getElementById('leave-reason').value = '';
+  document.getElementById('leave-status').value = 'pending';
+  openModal('modal-leave');
+});
+
+function editLeave(r){
+  document.getElementById('leave-modal-title').textContent = 'Edit Leave';
+  document.getElementById('leave-id').value = r.id;
+  document.getElementById('leave-employee').value = r.employee_id;
+  document.getElementById('leave-type').value = r.leave_type;
+  document.getElementById('leave-start').value = r.start_date;
+  document.getElementById('leave-end').value = r.end_date;
+  document.getElementById('leave-reason').value = r.reason || '';
+  document.getElementById('leave-status').value = r.status;
+  openModal('modal-leave');
+}
+
+async function saveLeave(){
+  const id = document.getElementById('leave-id').value;
+  const payload = {
+    employee_id: document.getElementById('leave-employee').value,
+    leave_type: document.getElementById('leave-type').value,
+    start_date: document.getElementById('leave-start').value,
+    end_date: document.getElementById('leave-end').value,
+    reason: document.getElementById('leave-reason').value,
+    status: document.getElementById('leave-status').value
+  };
+  try{
+    if(id) await apiPut('/api/leaves/' + id, payload);
+    else await apiPost('/api/leaves', payload);
+    closeModal('modal-leave');
+    await loadLeaves();
+  }catch(e){ alert(e.message); }
+}
+
+async function deleteLeave(id){
+  if(!confirm('Delete this leave record?')) return;
+  try{ await apiDelete('/api/leaves/' + id); await loadLeaves(); }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   PAYROLL
+========================================================= */
+async function loadPayroll(){
+  const search = document.getElementById('pay-search').value;
+  const status = document.getElementById('pay-filter-status').value;
+  const params = new URLSearchParams();
+  if(search) params.append('search', search);
+  if(status) params.append('status', status);
+  let records;
+  try{ records = await apiGet('/api/payroll?' + params.toString()); }catch(e){ console.error(e); return; }
+
+  const rows = records.map(r=>`
+    <tr>
+      <td><div class="cell-emp"><img src="${r.employee_pic}" alt=""><div>${r.employee_name}</div></div></td>
+      <td>${r.pay_period}</td>
+      <td>$${Number(r.basic_salary||0).toLocaleString()}</td>
+      <td>$${Number(r.bonus||0).toLocaleString()}</td>
+      <td>$${Number(r.deductions||0).toLocaleString()}</td>
+      <td><b>$${Number(r.net_pay||0).toLocaleString()}</b></td>
+      <td><span class="badge badge-${r.status}">${labelize(r.status)}</span></td>
+      <td>
+        <button class="icon-btn" onclick='editPayroll(${JSON.stringify(r)})'><i data-lucide="pencil" style="width:15px;height:15px;"></i></button>
+        <button class="icon-btn danger" onclick="deletePayroll('${r.id}')"><i data-lucide="trash-2" style="width:15px;height:15px;"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('payroll-tbody').innerHTML = rows || `<tr><td colspan="8" class="empty-state">No payroll records found</td></tr>`;
+  lucide.createIcons();
+}
+document.getElementById('pay-search').addEventListener('input', debounce(loadPayroll, 300));
+document.getElementById('pay-filter-status').addEventListener('change', loadPayroll);
+
+document.getElementById('btn-add-payroll').addEventListener('click', ()=>{
+  document.getElementById('payroll-modal-title').textContent = 'Generate Payroll';
+  document.getElementById('pay-id').value = '';
+  document.getElementById('pay-employee').value = '';
+  document.getElementById('pay-period').value = '';
+  document.getElementById('pay-basic').value = '';
+  document.getElementById('pay-bonus').value = 0;
+  document.getElementById('pay-deductions').value = 0;
+  document.getElementById('pay-net').value = 0;
+  document.getElementById('pay-date').value = '';
+  document.getElementById('pay-status').value = 'pending';
+  openModal('modal-payroll');
+});
+
+function editPayroll(r){
+  document.getElementById('payroll-modal-title').textContent = 'Edit Payroll';
+  document.getElementById('pay-id').value = r.id;
+  document.getElementById('pay-employee').value = r.employee_id;
+  document.getElementById('pay-period').value = r.pay_period;
+  document.getElementById('pay-basic').value = r.basic_salary;
+  document.getElementById('pay-bonus').value = r.bonus;
+  document.getElementById('pay-deductions').value = r.deductions;
+  document.getElementById('pay-net').value = r.net_pay;
+  document.getElementById('pay-date').value = r.pay_date || '';
+  document.getElementById('pay-status').value = r.status;
+  openModal('modal-payroll');
+}
+
+// Auto-fetch employee record & fill Basic Salary when employee selected
+async function autofillSalary(){
+  const empId = document.getElementById('pay-employee').value;
+  if(!empId) return;
+  try{
+    const emp = await apiGet('/api/employees/' + empId);
+    document.getElementById('pay-basic').value = emp.salary || 0;
+    recalcNetPay();
+  }catch(e){ console.error(e); }
+}
+
+function recalcNetPay(){
+  const basic = parseFloat(document.getElementById('pay-basic').value || 0);
+  const bonus = parseFloat(document.getElementById('pay-bonus').value || 0);
+  const deductions = parseFloat(document.getElementById('pay-deductions').value || 0);
+  document.getElementById('pay-net').value = (basic + bonus - deductions).toFixed(2);
+}
+
+async function savePayroll(){
+  const id = document.getElementById('pay-id').value;
+  const payload = {
+    employee_id: document.getElementById('pay-employee').value,
+    pay_period: document.getElementById('pay-period').value,
+    basic_salary: parseFloat(document.getElementById('pay-basic').value || 0),
+    bonus: parseFloat(document.getElementById('pay-bonus').value || 0),
+    deductions: parseFloat(document.getElementById('pay-deductions').value || 0),
+    pay_date: document.getElementById('pay-date').value || null,
+    status: document.getElementById('pay-status').value
+  };
+  try{
+    if(id) await apiPut('/api/payroll/' + id, payload);
+    else await apiPost('/api/payroll', payload);
+    closeModal('modal-payroll');
+    await loadPayroll();
+  }catch(e){ alert(e.message); }
+}
+
+async function deletePayroll(id){
+  if(!confirm('Delete this payroll record?')) return;
+  try{ await apiDelete('/api/payroll/' + id); await loadPayroll(); }catch(e){ alert(e.message); }
+}
+
+/* =========================================================
+   UTILS
+========================================================= */
+function debounce(fn, delay){
+  let timer;
+  return (...args)=>{ clearTimeout(timer); timer = setTimeout(()=>fn(...args), delay); };
+}
+</script>
+</body>
+</html>
